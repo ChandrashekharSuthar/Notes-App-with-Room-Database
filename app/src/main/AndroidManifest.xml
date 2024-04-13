@@ -13,6 +13,13 @@
         android:theme="@style/Theme.NotesAppWithRoom"
         tools:targetApi="31">
         <activity
+            android:name=".CreateNoteActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"/>
+        <activity
+            android:name=".NoteActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

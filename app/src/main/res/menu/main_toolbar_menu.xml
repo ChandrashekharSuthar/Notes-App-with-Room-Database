@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_developer_info"
+        android:icon="@drawable/round_info_24"
+        android:title="Developer Info"
+        app:iconTint="?colorOnSurface"
+        app:showAsAction="never" />
+
+
+    <!--    <item-->
+    <!--        android:id="@+id/action_theme"-->
+    <!--        android:title="Delete"-->
+    <!--        android:icon="@drawable/ic_delete"-->
+    <!--        android:showAsAction="ifRoom"/>-->
+</menu>

@@ -1,12 +1,12 @@
 package com.example.notesappwithroom
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.notesappwithroom.databinding.ActivityMainBinding
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -15,27 +15,71 @@ class MainActivity : AppCompatActivity() {
     }
 
     private lateinit var notesDatabase: NotesDatabase
+    private lateinit var adapter: NoteAdapter
 
-    @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-
+        // Get the database Instance
         notesDatabase = NotesDatabase.getNotesDatabase(this)
 
-        GlobalScope.launch {
-            notesDatabase.noteDao().createNote(
-                Note(
-                    0,
-                    System.currentTimeMillis().toString(),
-                    "First Note",
-                    "Description",
-                    true
-                )
-            )
+        // Initialize with an empty list
+        adapter = NoteAdapter(this, emptyList())
+        // Setup Recycler View
+        binding.notesRv.layoutManager =
+            StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+        binding.notesRv.adapter = adapter
+
+        getAllNotes() // Fetch Notes from Database
+
+        binding.createNoteBtn.setOnClickListener {
+            // Navigate to create Note Activity
+            val intent = Intent(this@MainActivity, CreateNoteActivity::class.java)
+            startActivity(intent)
+        }
+
+
+        // Scroll Effect for Fab button
+        binding.notesRv.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+            if (scrollY > oldScrollY) {
+                // Scrolling down
+                binding.createNoteBtn.shrink() // Hide FAB
+            } else {
+                // Scrolling up or not scrolling
+                binding.createNoteBtn.extend() // Show FAB
+            }
         }
 
 
     }
+
+    private fun getAllNotes() {
+        notesDatabase.noteDao().getAllNotes().observe(this) { notes ->
+            // Update UI or perform any actions with the received notes
+            adapter.submitList(notes)
+        }
+
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_toolbar_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_developer_info -> {
+                // Handle edit action
+                true
+            }
+//            R.id.action_delete -> {
+//                // Handle delete action
+//                true
+//            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+
 }

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.notesappwithroom.databinding.ActivityMainBinding
@@ -74,6 +75,8 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.action_developer_info -> {
                 // Handle edit action
+                Toast.makeText(this@MainActivity, "Feature Not Available yet", Toast.LENGTH_SHORT)
+                    .show()
                 true
             }
 //            R.id.action_delete -> {

@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.notesappwithroom.databinding.ActivityMainBinding
@@ -58,6 +59,8 @@ class MainActivity : AppCompatActivity() {
         notesDatabase.noteDao().getAllNotes().observe(this) { notes ->
             // Update UI or perform any actions with the received notes
             adapter.submitList(notes)
+            if (notes.isNotEmpty()) binding.noNoteText.visibility =
+                View.GONE else binding.noNoteText.visibility = View.VISIBLE
         }
 
     }

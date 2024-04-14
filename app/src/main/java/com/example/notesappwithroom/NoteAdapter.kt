@@ -1,12 +1,15 @@
 package com.example.notesappwithroom
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.card.MaterialCardView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -27,6 +30,13 @@ class NoteAdapter(val context: Context, private var notes: List<Note>) :
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
         val note = notes[position]
         holder.bind(note)
+        holder.itemView.setOnClickListener {
+            // Navigate to note Activity
+            val intent = Intent(context, NoteActivity::class.java)
+            intent.putExtra("Note", note)
+            context.startActivity(intent)
+        }
+
 
     }
 
@@ -44,6 +54,7 @@ class NoteAdapter(val context: Context, private var notes: List<Note>) :
         private val descriptionTextView: TextView = itemView.findViewById(R.id.descriptionTextView)
         private val dateTextView: TextView = itemView.findViewById(R.id.dateTextView)
         private val starredIcon: MaterialButton = itemView.findViewById(R.id.starredIcon)
+        private val noteCard: MaterialCardView = itemView.findViewById(R.id.noteCard)
 
         fun bind(note: Note) {
             titleTextView.text = note.title
@@ -52,6 +63,11 @@ class NoteAdapter(val context: Context, private var notes: List<Note>) :
             starredIcon.setIconResource(if (note.isStarred) R.drawable.round_star_24 else R.drawable.round_star_outline_24)
             starredIcon.setOnClickListener {
                 updateNote(note)
+            }
+
+            noteCard.setOnLongClickListener {
+                showDeleteConfirmationDialog(note)
+                true
             }
 
         }
@@ -76,6 +92,16 @@ class NoteAdapter(val context: Context, private var notes: List<Note>) :
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
+    private fun deleteNote(note: Note) {
+        GlobalScope.launch {
+            withContext(Dispatchers.IO) {
+                val noteDatabase = NotesDatabase.getNotesDatabase(context)
+                noteDatabase.noteDao().deleteNote(note)
+            }
+        }
+    }
+
 
     // Function to convert a string representing a long value to a Date object
     private fun formatDateFromLong(longString: String): String {
@@ -83,6 +109,21 @@ class NoteAdapter(val context: Context, private var notes: List<Note>) :
         val date = Date(longValue)
         val sdf = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
         return sdf.format(date)
+    }
+
+    // Function to show delete confirmation dialog
+    private fun showDeleteConfirmationDialog(note: Note) {
+        MaterialAlertDialogBuilder(context)
+            .setTitle("Delete Note")
+            .setMessage("Are you sure you want to delete the note '${note.title}'?")
+            .setPositiveButton("Delete") { _, _ ->
+                // Code to delete the note
+                deleteNote(note)
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
     }
 
 

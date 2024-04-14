@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
     <style name="Base.Theme.NotesAppWithRoom" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
@@ -6,4 +6,8 @@
     </style>
 
     <style name="Theme.NotesAppWithRoom" parent="Base.Theme.NotesAppWithRoom" />
+
+    <style name="curved">
+        <item name="cornerSize">35%</item>
+    </style>
 </resources>
